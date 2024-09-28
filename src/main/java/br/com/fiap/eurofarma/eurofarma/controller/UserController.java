@@ -67,7 +67,7 @@ public class UserController {
             List<EmployeeResponse> employeeResponseList = new ArrayList<>();
             courseStatus.forEach(courseStatus1 -> {
                 var employee = employeeRepository.findById(courseStatus1.getId().getEmployee_id());
-                employee.ifPresent(value -> employeeResponseList.add(new EmployeeResponse(value.getEmployee_id(),value.getSignature() , value.getDepartment(), value.getBirthDate(), value.getName(), courseStatus1.getStatus())));
+                employee.ifPresent(value -> employeeResponseList.add(new EmployeeResponse(value.getEmployee_id(),value.getSignature() , value.getDepartment(), value.getCreatedAt().toString(), value.getName(), courseStatus1.getStatus())));
             });
 
             return ResponseEntity.ok(new ResponseDTO(employeeResponseList));
