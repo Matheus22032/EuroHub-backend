@@ -1,60 +1,75 @@
 package br.com.fiap.eurofarma.eurofarma.controller;
 
-import br.com.fiap.eurofarma.eurofarma.model.Employee;
+import br.com.fiap.eurofarma.eurofarma.model.*;
+import br.com.fiap.eurofarma.eurofarma.repository.CourseRepository;
+import br.com.fiap.eurofarma.eurofarma.repository.CourseStatusRepository;
 import br.com.fiap.eurofarma.eurofarma.repository.EmployeeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/")
 public class UserController {
-    @Autowired
-    private EmployeeRepository repository;
+
+    private final EmployeeRepository employeeRepository;
+
+    private final CourseRepository courseRepository;
+
+    private final CourseStatusRepository courseStatusRepository;
+
+    public UserController(EmployeeRepository employeeRepository, CourseRepository courseRepository, CourseStatusRepository courseStatusRepository){
+        this.employeeRepository = employeeRepository;
+        this.courseRepository = courseRepository;
+        this.courseStatusRepository = courseStatusRepository;
+    }
+
 
     @PostMapping()
-    public ResponseEntity<Employee> user(@RequestBody Employee user){
-        repository.save(user);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<EmployeeResponse> user(@RequestBody EmployeeDTO employeeDTO){
+        Long courseId = employeeDTO.course_id();
+        Optional<Employee> employee = employeeRepository.findById(employeeDTO.employee_id());
 
-    }
 
-    @GetMapping()
-    public ResponseEntity<Iterable<Employee>> list(){
-        return ResponseEntity.ok(repository.findAll());
-    }
+        if(employee.isPresent()){
+            employee.get().setSignature(employeeDTO.signature());
+            Course course = new Course();
+            course.setCourse_id(courseId);
+            CourseStatusKey courseStatusKey = new CourseStatusKey();
+            courseStatusKey.setCourse_id(courseId);
+            courseStatusKey.setEmployee_id(employeeDTO.employee_id());
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Employee> get(@PathVariable Long id){
-        return ResponseEntity.of(repository.findById(id));
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Employee> delete(@PathVariable Long id){
-        var employee = repository.findById(id);
-        if(employee.isEmpty()){
-            return ResponseEntity.notFound().build();
+            CourseStatus courseStatus = new CourseStatus();
+            courseStatus.setCourse(course);
+            courseStatus.setEmployee(employee.get());
+            courseStatus.setId(courseStatusKey);
+            courseStatus.setStatus(true);
+            courseRepository.save(course);
+            courseStatusRepository.save(courseStatus);
+            employeeRepository.save(employee.get());
+            return ResponseEntity.ok(new EmployeeResponse(employee.get().getEmployee_id(), employee.get().getSignature(), employee.get().getDepartment(), employee.get().getBirthDate(), employee.get().getName(), true));
         }
-        repository.delete(employee.get());
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{courseId}")
+    public ResponseEntity<ResponseDTO> getUserByCourse( @PathVariable long courseId){
+        Optional<Course> course = courseRepository.findById(courseId);
+        if(course.isPresent()){
+            var courseStatus = course.get().getCoursesStatuses();
+            List<EmployeeResponse> employeeResponseList = new ArrayList<>();
+            courseStatus.forEach(courseStatus1 -> {
+                var employee = employeeRepository.findById(courseStatus1.getId().getEmployee_id());
+                employee.ifPresent(value -> employeeResponseList.add(new EmployeeResponse(value.getEmployee_id(),value.getSignature() , value.getDepartment(), value.getBirthDate(), value.getName(), courseStatus1.getStatus())));
+            });
+
+            return ResponseEntity.ok(new ResponseDTO(employeeResponseList));
+        }
         return ResponseEntity.ok().build();
-    }
-    @PutMapping("/{id}")
-    public ResponseEntity<Employee> update(@PathVariable Long id, @RequestBody Employee user){
-        var employee = repository.findById(id);
-        if(employee.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        var userUpdate = employee.get();
-        userUpdate.setName(user.getName());
-        userUpdate.setLastName(user.getLastName());
-        userUpdate.setActive(user.isActive());
-        userUpdate.setAge(user.getAge());
-        userUpdate.setCourse(user.getCourse());
-        userUpdate.setOnboarding(user.isOnboarding());
-        userUpdate.setSatisfaction(user.getSatisfaction());
-        userUpdate.setEntryDate(user.getEntryDate());
-        userUpdate.setExitDate(user.getExitDate());
-        repository.save(userUpdate);
-        return ResponseEntity.ok(userUpdate);
+
     }
 }

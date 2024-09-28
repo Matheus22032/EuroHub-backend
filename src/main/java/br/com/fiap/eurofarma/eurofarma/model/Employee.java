@@ -2,57 +2,50 @@ package br.com.fiap.eurofarma.eurofarma.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Employee {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_seq_gen")
-    @SequenceGenerator(name = "employee_seq_gen", sequenceName = "employee_seq", allocationSize = 1)
-    private Long id;
-    @Column(name = "name")
+    private Long employee_id;
+
     private String name;
-    @Column(name = "last_name")
-    private String lastName;
-    @Column(name = "active")
-    private boolean active;
-    @Column(name = "age")
-    private int age;
-    @Column(name = "course")
-    private int course;
-    @Column(name = "onboarding")
-    private boolean onboarding;
-    @Column(name = "satisfaction")
-    private int satisfaction;
-    @Column(name = "entry_date")
-    private LocalDate entryDate;
-    @Column(name = "exit_date")
-    private LocalDate exitDate;
 
+    private String birthDate;
 
-    public Employee(Long id, String name, String lastName, boolean active, int age, int course, boolean onboarding, int satisfaction, LocalDate entryDate, LocalDate exitDate) {
-        this.id = id;
-        this.name = name;
-        this.lastName = lastName;
-        this.active = active;
-        this.age = age;
-        this.course = course;
-        this.onboarding = onboarding;
-        this.satisfaction = satisfaction;
-        this.entryDate = entryDate;
-        this.exitDate = exitDate;
-    }
+    private String department;
+
+    private String signature;
+    @OneToMany(mappedBy = "employee")
+    private Set<CourseStatus> courseStatuses;
 
     public Employee() {
 
     }
 
-    public long getId() {
-        return id;
+    public Employee(Long employee_id, String name, String birthDate, String department, Set<CourseStatus> courseStatusSet) {
+        this.employee_id = employee_id;
+        this.name = name;
+        this.birthDate = birthDate;
+        this.department = department;
+        this.courseStatuses = courseStatusSet;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String siginature) {
+        this.signature = siginature;
+    }
+
+    public long getEmployee_id() {
+        return employee_id;
+    }
+
+    public void setEmployee_id(long id) {
+        this.employee_id = id;
     }
 
     public String getName() {
@@ -63,71 +56,47 @@ public class Employee {
         this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getDepartment() {
+        return department;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.employee_id = id;
     }
 
-    public boolean isActive() {
-        return active;
+    public void setEmployee_id(Long employee_id) {
+        this.employee_id = employee_id;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public String getBirthDate() {
+        return birthDate;
     }
 
-    public int getAge() {
-        return age;
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public Set<CourseStatus> getCourseStatuses() {
+        return courseStatuses;
     }
 
-    public int getCourse() {
-        return course;
+    public void setCourseStatuses(Set<CourseStatus> courseStatuses) {
+        this.courseStatuses = courseStatuses;
     }
 
-    public void setCourse(int course) {
-        this.course = course;
-    }
-
-    public boolean isOnboarding() {
-        return onboarding;
-    }
-
-    public void setOnboarding(boolean onboarding) {
-        this.onboarding = onboarding;
-    }
-
-    public int getSatisfaction() {
-        return satisfaction;
-    }
-
-    public void setSatisfaction(int satisfaction) {
-        this.satisfaction = satisfaction;
-    }
-
-    public LocalDate getEntryDate() {
-        return entryDate;
-    }
-
-    public void setEntryDate(LocalDate entryDate) {
-        this.entryDate = entryDate;
-    }
-
-    public LocalDate getExitDate() {
-        return exitDate;
-    }
-
-    public void setExitDate(LocalDate exitDate) {
-        this.exitDate = exitDate;
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "employee_id=" + employee_id +
+                ", name='" + name + '\'' +
+                ", birthDate='" + birthDate + '\'' +
+                ", department='" + department + '\'' +
+                ", signature='" + signature + '\'' +
+                ", courseStatuses=" + courseStatuses +
+                '}';
     }
 }
