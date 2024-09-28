@@ -10,6 +10,9 @@ public class CourseStatus {
 
     private boolean status;
 
+    @Column(columnDefinition = "TEXT")
+    private String signature;
+
     @ManyToOne
     @MapsId("employee_id")
     @JoinColumn(name = "employee_id")
@@ -23,13 +26,13 @@ public class CourseStatus {
     public CourseStatus() {
     }
 
-    public CourseStatus(CourseStatusKey id, boolean status, Employee employee, Course course) {
+    public CourseStatus(CourseStatusKey id, boolean status, String signature, Employee employee, Course course) {
         this.id = id;
         this.status = status;
+        this.signature = signature;
         this.employee = employee;
         this.course = course;
     }
-
     public CourseStatusKey getId() {
         return id;
     }
@@ -60,6 +63,18 @@ public class CourseStatus {
 
     public void setCourse(Course course) {
         this.course = course;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public boolean isStatus() {
+        return status;
     }
 
     @Override

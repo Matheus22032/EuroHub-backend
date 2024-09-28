@@ -37,7 +37,7 @@ public class UserController {
 
         if(employee.isPresent()){
             var createNow = LocalDate.now();
-            employee.get().setSignature(employeeDTO.signature());
+
             employee.get().setCreatedAt(createNow);
             Course course = new Course();
             course.setCourse_id(courseId);
@@ -51,10 +51,11 @@ public class UserController {
             courseStatus.setEmployee(employee.get());
             courseStatus.setId(courseStatusKey);
             courseStatus.setStatus(true);
+            courseStatus.setSignature(employeeDTO.signature());
             courseRepository.save(course);
             courseStatusRepository.save(courseStatus);
             employeeRepository.save(employee.get());
-            return ResponseEntity.ok(new EmployeeResponse(employee.get().getEmployee_id(), employee.get().getSignature(), employee.get().getDepartment(), createNow.toString(), employee.get().getName(), true));
+            return ResponseEntity.ok(new EmployeeResponse(employee.get().getEmployee_id(), courseStatus.getSignature(), employee.get().getDepartment(), createNow.toString(), employee.get().getName(), true));
         }
         return ResponseEntity.notFound().build();
     }
@@ -67,7 +68,7 @@ public class UserController {
             List<EmployeeResponse> employeeResponseList = new ArrayList<>();
             courseStatus.forEach(courseStatus1 -> {
                 var employee = employeeRepository.findById(courseStatus1.getId().getEmployee_id());
-                employee.ifPresent(value -> employeeResponseList.add(new EmployeeResponse(value.getEmployee_id(),value.getSignature() , value.getDepartment(), value.getCreatedAt().toString(), value.getName(), courseStatus1.getStatus())));
+                employee.ifPresent(value -> employeeResponseList.add(new EmployeeResponse(value.getEmployee_id(),courseStatus1.getSignature() , value.getDepartment(), value.getCreatedAt().toString(), value.getName(), courseStatus1.getStatus())));
             });
 
             return ResponseEntity.ok(new ResponseDTO(employeeResponseList));

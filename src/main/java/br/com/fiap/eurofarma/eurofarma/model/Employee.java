@@ -15,8 +15,7 @@ public class Employee {
     private String birthDate;
 
     private String department;
-    @Column(columnDefinition = "TEXT")
-    private String signature;
+
 
     private LocalDate createdAt;
 
@@ -27,22 +26,13 @@ public class Employee {
 
     }
 
-    public Employee(Long employee_id, String name, String birthDate, String department, String signature, LocalDate createdAt, Set<CourseStatus> courseStatuses) {
+    public Employee(Long employee_id, String name, String birthDate, String department, LocalDate createdAt, Set<CourseStatus> courseStatuses) {
         this.employee_id = employee_id;
         this.name = name;
         this.birthDate = birthDate;
         this.department = department;
-        this.signature = signature;
         this.createdAt = createdAt;
         this.courseStatuses = courseStatuses;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String siginature) {
-        this.signature = siginature;
     }
 
     public long getEmployee_id() {
@@ -108,7 +98,6 @@ public class Employee {
                 ", name='" + name + '\'' +
                 ", birthDate='" + birthDate + '\'' +
                 ", department='" + department + '\'' +
-                ", signature='" + signature + '\'' +
                 ", courseStatuses=" + courseStatuses +
                 '}';
     }
