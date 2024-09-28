@@ -7,6 +7,7 @@ import br.com.fiap.eurofarma.eurofarma.repository.EmployeeRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +36,9 @@ public class UserController {
 
 
         if(employee.isPresent()){
+            var createNow = LocalDate.now();
             employee.get().setSignature(employeeDTO.signature());
+            employee.get().setCreatedAt(createNow);
             Course course = new Course();
             course.setCourse_id(courseId);
             CourseStatusKey courseStatusKey = new CourseStatusKey();
@@ -51,7 +54,7 @@ public class UserController {
             courseRepository.save(course);
             courseStatusRepository.save(courseStatus);
             employeeRepository.save(employee.get());
-            return ResponseEntity.ok(new EmployeeResponse(employee.get().getEmployee_id(), employee.get().getSignature(), employee.get().getDepartment(), employee.get().getBirthDate(), employee.get().getName(), true));
+            return ResponseEntity.ok(new EmployeeResponse(employee.get().getEmployee_id(), employee.get().getSignature(), employee.get().getDepartment(), createNow.toString(), employee.get().getName(), true));
         }
         return ResponseEntity.notFound().build();
     }

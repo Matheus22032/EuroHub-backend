@@ -2,7 +2,7 @@ package br.com.fiap.eurofarma.eurofarma.model;
 
 import jakarta.persistence.*;
 
-import java.util.HashSet;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -15,8 +15,11 @@ public class Employee {
     private String birthDate;
 
     private String department;
-
+    @Lob
     private String signature;
+
+    private LocalDate createdAt;
+
     @OneToMany(mappedBy = "employee")
     private Set<CourseStatus> courseStatuses;
 
@@ -24,12 +27,14 @@ public class Employee {
 
     }
 
-    public Employee(Long employee_id, String name, String birthDate, String department, Set<CourseStatus> courseStatusSet) {
+    public Employee(Long employee_id, String name, String birthDate, String department, String signature, LocalDate createdAt, Set<CourseStatus> courseStatuses) {
         this.employee_id = employee_id;
         this.name = name;
         this.birthDate = birthDate;
         this.department = department;
-        this.courseStatuses = courseStatusSet;
+        this.signature = signature;
+        this.createdAt = createdAt;
+        this.courseStatuses = courseStatuses;
     }
 
     public String getSignature() {
@@ -86,6 +91,14 @@ public class Employee {
 
     public void setCourseStatuses(Set<CourseStatus> courseStatuses) {
         this.courseStatuses = courseStatuses;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
