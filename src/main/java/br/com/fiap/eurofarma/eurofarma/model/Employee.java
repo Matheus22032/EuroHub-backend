@@ -15,7 +15,7 @@ public class Employee {
     private String birthDate;
 
     private String department;
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String signature;
 
     private LocalDate createdAt;
